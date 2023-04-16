@@ -71,7 +71,7 @@ class _AboutState extends State<About> {
                     //terms and condition
                     InkWell(
                       onTap: () {
-                        openBrowser('https://selectrideshareworldwide.com/terms');
+                        openBrowser('terms and conditions url');
                       },
                       child: Text(
                         languages[choosenLanguage]['text_termsandconditions'],
@@ -87,7 +87,7 @@ class _AboutState extends State<About> {
                     //privacy policy
                     InkWell(
                       onTap: () {
-                        openBrowser('https://selectrideshareworldwide.com/privacy');
+                        openBrowser('privacy policy url');
                       },
                       child: Text(
                         languages[choosenLanguage]['text_privacy'],
@@ -103,7 +103,7 @@ class _AboutState extends State<About> {
                     //website url
                     InkWell(
                       onTap: () {
-                        openBrowser('https://selectrideshareworldwide.com/');
+                        openBrowser('website url');
                       },
                       child: Text(
                         languages[choosenLanguage]['text_about'],

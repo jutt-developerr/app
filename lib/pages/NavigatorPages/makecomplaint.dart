@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/nointernet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:tagyourtaxi_driver/translations/translation.dart';
@@ -26,6 +27,13 @@ class _MakeComplaintState extends State<MakeComplaint> {
   TextEditingController complaintText = TextEditingController();
   bool _success = false;
 
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
+
   @override
   void initState() {
     getData();
@@ -33,6 +41,7 @@ class _MakeComplaintState extends State<MakeComplaint> {
   }
 
   getData() async {
+    dynamic result;
     if (mounted) {
       setState(() {
         complaintType = 0;
@@ -41,11 +50,14 @@ class _MakeComplaintState extends State<MakeComplaint> {
       });
     }
     if (widget.fromPage == 1) {
-      await getGeneralComplaint("request");
+      result = await getGeneralComplaint("request");
     } else {
-      await getGeneralComplaint("general");
+      result = await getGeneralComplaint("general");
     }
     if (mounted) {
+      if (result == 'logout') {
+        navigateLogout();
+      }
       setState(() {
         _isLoading = false;
         if (generalComplaintList.isNotEmpty) {
@@ -196,6 +208,9 @@ class _MakeComplaintState extends State<MakeComplaint> {
                                       result = await makeRequestComplaint();
                                     } else {
                                       result = await makeGeneralComplaint();
+                                    }
+                                    if (result == 'logout') {
+                                      navigateLogout();
                                     }
                                     setState(() {
                                       if (result == 'success') {

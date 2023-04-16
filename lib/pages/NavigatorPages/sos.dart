@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/NavigatorPages/pickcontacts.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:tagyourtaxi_driver/translations/translation.dart';
 import 'package:tagyourtaxi_driver/widgets/widgets.dart';
@@ -18,6 +19,13 @@ class _SosState extends State<Sos> {
   bool _isDeleting = false;
   bool _isLoading = false;
   String _deleteId = '';
+
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -308,6 +316,8 @@ class _SosState extends State<Sos> {
                                                 setState(() {
                                                   _isDeleting = false;
                                                 });
+                                              } else if (val == 'logout') {
+                                                navigateLogout();
                                               }
                                               setState(() {
                                                 _isLoading = false;

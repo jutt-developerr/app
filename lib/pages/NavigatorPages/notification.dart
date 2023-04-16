@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 
 import '../../functions/functions.dart';
 import '../../styles/styles.dart';
@@ -25,12 +26,28 @@ class _NotificationPageState extends State<NotificationPage> {
     super.initState();
   }
 
+  navigate() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
+
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
+
   getdata() async {
     var val = await getnotificationHistory();
     if (val == 'success') {
       if (mounted) {
         isLoading = false;
       }
+    } else if (val == 'logout') {
+      navigate();
     }
   }
 
@@ -313,8 +330,12 @@ class _NotificationPageState extends State<NotificationPage> {
                                                       setState(() {
                                                         isLoading = true;
                                                       });
-                                                      await getNotificationPages(
-                                                          'page=${notificationHistoryPage['pagination']['current_page'] + 1}');
+                                                      var result =
+                                                          await getNotificationPages(
+                                                              'page=${notificationHistoryPage['pagination']['current_page'] + 1}');
+                                                      if (result == 'logout') {
+                                                        navigateLogout();
+                                                      }
                                                       setState(() {
                                                         isLoading = false;
                                                       });
@@ -510,6 +531,8 @@ class _NotificationPageState extends State<NotificationPage> {
                                                     isLoading = false;
                                                     showToast();
                                                   });
+                                                } else if (result == 'logout') {
+                                                  navigateLogout();
                                                 } else {
                                                   // setState(() {
                                                   //   logout = true;

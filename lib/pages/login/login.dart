@@ -380,7 +380,7 @@ class _LoginState extends State<Login> {
                                   ),
                                   InkWell(
                                     onTap: () {
-                                      openBrowser('https://selectrideshareworldwide.com/terms');
+                                      openBrowser('terms and conditions url');
                                     },
                                     child: Text(
                                       languages[choosenLanguage]['text_terms'],
@@ -397,7 +397,7 @@ class _LoginState extends State<Login> {
                                   ),
                                   InkWell(
                                     onTap: () {
-                                      openBrowser('https://selectrideshareworldwide.com/privacy');
+                                      openBrowser('privacy policy url');
                                     },
                                     child: Text(
                                       languages[choosenLanguage]

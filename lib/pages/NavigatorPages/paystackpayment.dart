@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/NavigatorPages/walletpage.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/nointernet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:tagyourtaxi_driver/translations/translation.dart';
@@ -32,6 +33,13 @@ class _PayStackPageState extends State<PayStackPage> {
     super.initState();
   }
 
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
+
 //payment gateway code
 
   payMoney() async {
@@ -42,7 +50,9 @@ class _PayStackPageState extends State<PayStackPage> {
     } else {
       val = await getPaystackPayment(jsonEncode({'amount': addMoney * 100}));
     }
-    if (val != 'success') {
+    if (val == 'logout') {
+      navigateLogout();
+    } else if (val != 'success') {
       _error = val.toString();
     }
     if (mounted) {

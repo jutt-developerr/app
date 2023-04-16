@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/nointernet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -78,6 +79,13 @@ class _PickContactState extends State<PickContact> {
   //navigate pop
   pop() {
     Navigator.pop(context, true);
+  }
+
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
   }
 
   @override
@@ -268,6 +276,8 @@ class _PickContactState extends State<PickContact> {
                                     await addSos(pickedName, pickedNumber);
                                 if (val == 'success') {
                                   pop();
+                                } else if (val == 'logout') {
+                                  navigateLogout();
                                 }
                                 setState(() {
                                   _isLoading = false;

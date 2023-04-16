@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/nointernet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:tagyourtaxi_driver/translations/translation.dart';
@@ -18,6 +19,14 @@ class _FavoriteState extends State<Favorite> {
   bool _isLoading = false;
   bool _deletingAddress = false;
   dynamic _deletingId;
+
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -271,6 +280,8 @@ class _FavoriteState extends State<Favorite> {
                                             setState(() {
                                               _deletingAddress = false;
                                             });
+                                          } else if (result == 'logout') {
+                                            navigateLogout();
                                           }
                                           setState(() {
                                             _isLoading = false;

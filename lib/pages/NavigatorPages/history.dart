@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/NavigatorPages/historydetails.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/nointernet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:tagyourtaxi_driver/translations/translation.dart';
@@ -31,6 +32,13 @@ class _HistoryState extends State<History> {
     super.initState();
   }
 
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
+
 //get history datas
   _getHistory() async {
     setState(() {
@@ -44,6 +52,8 @@ class _HistoryState extends State<History> {
           _isLoading = false;
         });
       }
+    } else if (val == 'logout') {
+      navigateLogout();
     }
   }
 
@@ -119,7 +129,10 @@ class _HistoryState extends State<History> {
                                       _isLoading = true;
                                     });
 
-                                    await getHistory('is_later=1');
+                                    var val = await getHistory('is_later=1');
+                                    if (val == 'logout') {
+                                      navigateLogout();
+                                    }
                                     setState(() {
                                       _isLoading = false;
                                     });
@@ -154,7 +167,11 @@ class _HistoryState extends State<History> {
                                       _isLoading = true;
                                     });
 
-                                    await getHistory('is_completed=1');
+                                    var val =
+                                        await getHistory('is_completed=1');
+                                    if (val == 'logout') {
+                                      navigateLogout();
+                                    }
                                     setState(() {
                                       _isLoading = false;
                                     });
@@ -189,7 +206,11 @@ class _HistoryState extends State<History> {
                                       _isLoading = true;
                                     });
 
-                                    await getHistory('is_cancelled=1');
+                                    var val =
+                                        await getHistory('is_cancelled=1');
+                                    if (val == 'logout') {
+                                      navigateLogout();
+                                    }
                                     setState(() {
                                       _isLoading = false;
                                     });
@@ -994,15 +1015,19 @@ class _HistoryState extends State<History> {
                                               setState(() {
                                                 _isLoading = true;
                                               });
+                                              dynamic val;
                                               if (_showHistory == 0) {
-                                                await getHistoryPages(
+                                                val = await getHistoryPages(
                                                     'is_later=1&page=${myHistoryPage['pagination']['current_page'] + 1}');
                                               } else if (_showHistory == 1) {
-                                                await getHistoryPages(
+                                                val = await getHistoryPages(
                                                     'is_completed=1&page=${myHistoryPage['pagination']['current_page'] + 1}');
                                               } else if (_showHistory == 2) {
-                                                await getHistoryPages(
+                                                val = await getHistoryPages(
                                                     'is_cancelled=1&page=${myHistoryPage['pagination']['current_page'] + 1}');
+                                              }
+                                              if (val == 'logout') {
+                                                navigateLogout();
                                               }
                                               setState(() {
                                                 _isLoading = false;
@@ -1094,8 +1119,12 @@ class _HistoryState extends State<History> {
                                               setState(() {
                                                 _isLoading = true;
                                               });
-                                              await cancelLaterRequest(
-                                                  _cancelId);
+                                              var val =
+                                                  await cancelLaterRequest(
+                                                      _cancelId);
+                                              if (val == 'logout') {
+                                                navigateLogout();
+                                              }
                                               await _getHistory();
                                               setState(() {
                                                 _cancelRide = false;

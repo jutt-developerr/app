@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/functions/geohash.dart';
 import 'package:tagyourtaxi_driver/pages/chatPage/chat_page.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/onTripPage/invoice.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
 import 'package:tagyourtaxi_driver/pages/onTripPage/map_page.dart';
@@ -161,7 +162,10 @@ class _BookingConfirmationState extends State<BookingConfirmation>
         } else if (userRequestData.isNotEmpty &&
             userRequestData['accepted_at'] == null &&
             timing == 0) {
-          await cancelRequest();
+          var val = await cancelRequest();
+          if (val == 'logout') {
+            navigateLogout();
+          }
           setState(() {
             noDriverFound = true;
           });
@@ -397,6 +401,13 @@ class _BookingConfirmationState extends State<BookingConfirmation>
         .asUint8List();
   }
 
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
+
 //get location permission and location details
   getLocs() async {
     setState(() {
@@ -420,9 +431,15 @@ class _BookingConfirmationState extends State<BookingConfirmation>
     _dist = null;
 
     if (widget.type != 1) {
-      etaRequest();
+      var val = await etaRequest();
+      if (val == 'logout') {
+        navigateLogout();
+      }
     } else {
-      rentalEta();
+      var val = await rentalEta();
+      if (val == 'logout') {
+        navigateLogout();
+      }
     }
 
     permission = await location.hasPermission();
@@ -607,7 +624,7 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                   return StreamBuilder<DatabaseEvent>(
                       stream: (userRequestData['driverDetail'] == null &&
                               pinLocationIcon != null)
-                          ? fdb.onValue
+                          ? fdb.onValue.asBroadcastStream()
                           : null,
                       builder: (context, AsyncSnapshot<DatabaseEvent> event) {
                         if (event.hasData) {
@@ -755,6 +772,7 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                     .ref(
                                         'drivers/${userRequestData['driverDetail']['data']['id']}')
                                     .onValue
+                                    .asBroadcastStream()
                                 : null,
                             builder:
                                 (context, AsyncSnapshot<DatabaseEvent> event) {
@@ -785,7 +803,9 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                               driverData['l'][1]);
                                           _dist = double.parse(
                                               (distCalc / 1000).toString());
-                                        } else {
+                                        } else if (userRequestData[
+                                                'is_rental'] !=
+                                            true) {
                                           var distCalc = calculateDistance(
                                             driverData['l'][0],
                                             driverData['l'][1],
@@ -1226,7 +1246,7 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                           return MapEntry(
                                                                               i,
                                                                               StreamBuilder<DatabaseEvent>(
-                                                                                  stream: fdb.onValue,
+                                                                                  stream: fdb.onValue.asBroadcastStream(),
                                                                                   builder: (context, AsyncSnapshot event) {
                                                                                     if (event.data != null && etaDetails.isNotEmpty) {
                                                                                       minutes[etaDetails[i]['type_id']] = '';
@@ -1462,7 +1482,7 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                                     return MapEntry(
                                                                                         i,
                                                                                         StreamBuilder<DatabaseEvent>(
-                                                                                            stream: fdb.onValue,
+                                                                                            stream: fdb.onValue.asBroadcastStream(),
                                                                                             builder: (context, AsyncSnapshot event) {
                                                                                               if (event.data != null && etaDetails.isNotEmpty) {
                                                                                                 minutes[rentalOption[i]['type_id']] = '';
@@ -2198,9 +2218,17 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                     false) {
                                                                   result =
                                                                       await createRequest();
+                                                                  if (result ==
+                                                                      'logout') {
+                                                                    navigateLogout();
+                                                                  }
                                                                 } else {
                                                                   result =
                                                                       await createRequestWithPromo();
+                                                                  if (result ==
+                                                                      'logout') {
+                                                                    navigateLogout();
+                                                                  }
                                                                 }
                                                               } else {
                                                                 if (rentalOption[
@@ -2210,9 +2238,17 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                     false) {
                                                                   result =
                                                                       await createRentalRequest();
+                                                                  if (result ==
+                                                                      'logout') {
+                                                                    navigateLogout();
+                                                                  }
                                                                 } else {
                                                                   result =
                                                                       await createRentalRequestWithPromo();
+                                                                  if (result ==
+                                                                      'logout') {
+                                                                    navigateLogout();
+                                                                  }
                                                                 }
                                                               }
                                                             }
@@ -2839,9 +2875,17 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                             false;
                                                       });
                                                       if (widget.type != 1) {
-                                                        await etaRequest();
+                                                        var val =
+                                                            await etaRequest();
+                                                        if (val == 'logout') {
+                                                          navigateLogout();
+                                                        }
                                                       } else {
-                                                        await rentalEta();
+                                                        var val =
+                                                            await rentalEta();
+                                                        if (val == 'logout') {
+                                                          navigateLogout();
+                                                        }
                                                       }
                                                       setState(() {});
                                                     },
@@ -3259,8 +3303,14 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                                         dynamic result;
                                                                                         if (widget.type != 1) {
                                                                                           result = await etaRequest();
+                                                                                          if (result == 'logout') {
+                                                                                            navigateLogout();
+                                                                                          }
                                                                                         } else {
                                                                                           result = await rentalEta();
+                                                                                          if (result == 'logout') {
+                                                                                            navigateLogout();
+                                                                                          }
                                                                                         }
                                                                                         setState(() {
                                                                                           _isLoading = false;
@@ -3284,15 +3334,21 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                                         Text(promoKey.text, style: GoogleFonts.roboto(fontSize: media.width * twelve, color: const Color(0xffFF0000))),
                                                                                         InkWell(
                                                                                           onTap: () {
-                                                                                            setState(() {
+                                                                                            setState(() async {
                                                                                               promoStatus = null;
                                                                                               promoCode = '';
                                                                                               promoKey.clear();
                                                                                               // promoKey.text = promoCode;
                                                                                               if (widget.type != 1) {
-                                                                                                etaRequest();
+                                                                                                var val = await etaRequest();
+                                                                                                if (val == 'logout') {
+                                                                                                  navigateLogout();
+                                                                                                }
                                                                                               } else {
-                                                                                                rentalEta();
+                                                                                                var val = await rentalEta();
+                                                                                                if (val == 'logout') {
+                                                                                                  navigateLogout();
+                                                                                                }
                                                                                               }
                                                                                             });
                                                                                           },
@@ -3354,9 +3410,19 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                     if (widget
                                                                             .type !=
                                                                         1) {
-                                                                      await etaRequestWithPromo();
+                                                                      var val =
+                                                                          await etaRequestWithPromo();
+                                                                      if (val ==
+                                                                          'logout') {
+                                                                        navigateLogout();
+                                                                      }
                                                                     } else {
-                                                                      await rentalRequestWithPromo();
+                                                                      var val =
+                                                                          await rentalRequestWithPromo();
+                                                                      if (val ==
+                                                                          'logout') {
+                                                                        navigateLogout();
+                                                                      }
                                                                     }
                                                                     setState(
                                                                         () {
@@ -3650,8 +3716,12 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                 ),
                                                 Button(
                                                     width: media.width * 0.5,
-                                                    onTap: () {
-                                                      cancelRequest();
+                                                    onTap: () async {
+                                                      var val =
+                                                          await cancelRequest();
+                                                      if (val == 'logout') {
+                                                        navigateLogout();
+                                                      }
                                                     },
                                                     text: languages[
                                                             choosenLanguage]
@@ -4271,6 +4341,8 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                                     _cancellingError = '';
                                                                                     _cancelling = true;
                                                                                   });
+                                                                                } else if (reason == 'logout') {
+                                                                                  navigateLogout();
                                                                                 }
                                                                                 setState(() {
                                                                                   _isLoading = false;
@@ -4683,8 +4755,13 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                         .isNotEmpty) {
                                                                   _cancellingError =
                                                                       '';
-                                                                  await cancelRequestWithReason(
-                                                                      _cancelCustomReason);
+                                                                  var val =
+                                                                      await cancelRequestWithReason(
+                                                                          _cancelCustomReason);
+                                                                  if (val ==
+                                                                      'logout') {
+                                                                    navigateLogout();
+                                                                  }
                                                                   setState(() {
                                                                     _cancelling =
                                                                         false;
@@ -4698,8 +4775,13 @@ class _BookingConfirmationState extends State<BookingConfirmation>
                                                                   });
                                                                 }
                                                               } else {
-                                                                await cancelRequestWithReason(
-                                                                    _cancelReason);
+                                                                var val =
+                                                                    await cancelRequestWithReason(
+                                                                        _cancelReason);
+                                                                if (val ==
+                                                                    'logout') {
+                                                                  navigateLogout();
+                                                                }
                                                                 setState(() {
                                                                   _cancelling =
                                                                       false;
@@ -4933,6 +5015,10 @@ class _BookingConfirmationState extends State<BookingConfirmation>
 
                                                                 val =
                                                                     await createRequestLater();
+                                                                if (val ==
+                                                                    'logout') {
+                                                                  navigateLogout();
+                                                                }
                                                                 setState(() {
                                                                   if (val ==
                                                                       'success') {
@@ -4953,6 +5039,10 @@ class _BookingConfirmationState extends State<BookingConfirmation>
 
                                                                 val =
                                                                     await createRequestLaterPromo();
+                                                                if (val ==
+                                                                    'logout') {
+                                                                  navigateLogout();
+                                                                }
                                                                 setState(() {
                                                                   if (val ==
                                                                       'success') {
@@ -4980,6 +5070,10 @@ class _BookingConfirmationState extends State<BookingConfirmation>
 
                                                                 val =
                                                                     await createRentalRequestLater();
+                                                                if (val ==
+                                                                    'logout') {
+                                                                  navigateLogout();
+                                                                }
                                                                 setState(() {
                                                                   if (val ==
                                                                       'success') {
@@ -5000,6 +5094,10 @@ class _BookingConfirmationState extends State<BookingConfirmation>
 
                                                                 val =
                                                                     await createRentalRequestLaterPromo();
+                                                                if (val ==
+                                                                    'logout') {
+                                                                  navigateLogout();
+                                                                }
                                                                 setState(() {
                                                                   if (val ==
                                                                       'success') {

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/NavigatorPages/walletpage.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/noInternet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:tagyourtaxi_driver/translations/translation.dart';
@@ -32,6 +33,13 @@ class _FlutterWavePageState extends State<FlutterWavePage> {
   //navigate pop
   pop() {
     Navigator.pop(context, true);
+  }
+
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
   }
 
 //payment gateway code
@@ -159,9 +167,15 @@ class _FlutterWavePageState extends State<FlutterWavePage> {
                                     if (widget.from == '1') {
                                       val = await payMoneyStripe(
                                           response.transactionId);
+                                      if (val == 'logout') {
+                                        navigateLogout();
+                                      }
                                     } else {
                                       val = await addMoneyFlutterwave(
                                           addMoney, response.transactionId);
+                                      if (val == 'logout') {
+                                        navigateLogout();
+                                      }
                                     }
                                     if (val == 'success') {
                                       setState(() {

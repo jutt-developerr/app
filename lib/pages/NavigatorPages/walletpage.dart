@@ -4,6 +4,7 @@ import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/NavigatorPages/flutterwavepage.dart';
 import 'package:tagyourtaxi_driver/pages/NavigatorPages/selectwallet.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/nointernet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:tagyourtaxi_driver/translations/translation.dart';
@@ -47,6 +48,8 @@ class _WalletPageState extends State<WalletPage> {
       _isLoading = false;
       _completed = true;
       valueNotifierBook.incrementNotifier();
+    } else if (val == 'logout') {
+      navigateLogout();
     }
   }
 
@@ -79,6 +82,13 @@ class _WalletPageState extends State<WalletPage> {
 
   navigate() {
     Navigator.pop(context);
+  }
+
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
   }
 
   @override
@@ -363,10 +373,13 @@ class _WalletPageState extends State<WalletPage> {
                                                 _isLoading = true;
                                               });
 
-                                              await getWalletHistoryPage(
+                                              var val = await getWalletHistoryPage(
                                                   (walletPages['current_page'] +
                                                           1)
                                                       .toString());
+                                              if (val == 'logout') {
+                                                navigateLogout();
+                                              }
 
                                               setState(() {
                                                 _isLoading = false;
@@ -1147,6 +1160,9 @@ class _WalletPageState extends State<WalletPage> {
                                                           getWallet();
                                                           showToast();
                                                         });
+                                                      } else if (result ==
+                                                          'logout') {
+                                                        navigateLogout();
                                                       } else {
                                                         setState(() {
                                                           error = true;

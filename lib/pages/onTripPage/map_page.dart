@@ -75,7 +75,6 @@ class _MapsState extends State<Maps>
   dynamic pinLocationIcon2;
   dynamic userLocationIcon;
   bool favAddressAdd = false;
-  bool _showToast = false;
   bool contactus = false;
   final _mapMarkerSC = StreamController<List<Marker>>();
   StreamSink<List<Marker>> get _mapMarkerSink => _mapMarkerSC.sink;
@@ -135,16 +134,11 @@ class _MapsState extends State<Maps>
         MaterialPageRoute(builder: (context) => BookingConfirmation()));
   }
 
-//show toast for demo
-  addToast() {
-    setState(() {
-      _showToast = true;
-    });
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _showToast = false;
-      });
-    });
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
   }
 
 //get location permission and location details
@@ -2143,6 +2137,9 @@ class _MapsState extends State<Maps>
                                                           favLng,
                                                           favSelectedAddress,
                                                           favNameText);
+                                                  if (val == 'logout') {
+                                                    navigateLogout();
+                                                  }
                                                   setState(() {
                                                     _loading = false;
                                                     if (val == true) {
@@ -2165,6 +2162,9 @@ class _MapsState extends State<Maps>
                                                           favLng,
                                                           favSelectedAddress,
                                                           favName);
+                                                  if (val == 'logout') {
+                                                    navigateLogout();
+                                                  }
                                                   setState(() {
                                                     _loading = false;
                                                     if (val == true) {
@@ -2362,6 +2362,8 @@ class _MapsState extends State<Maps>
                                                         (route) => false);
                                                     userDetails.clear();
                                                   });
+                                                } else if (result == 'logout') {
+                                                  navigateLogout();
                                                 } else {
                                                   setState(() {
                                                     _loading = false;
@@ -2581,27 +2583,6 @@ class _MapsState extends State<Maps>
                                 ],
                               ),
                             ))
-                          : Container(),
-
-                      //display toast
-                      (_showToast == true)
-                          ? Positioned(
-                              top: media.height * 0.5,
-                              child: Container(
-                                width: media.width * 0.9,
-                                margin: EdgeInsets.all(media.width * 0.05),
-                                padding: EdgeInsets.all(media.width * 0.025),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: page),
-                                child: Text(
-                                  'Auto address by scrolling map feature is not available in demo',
-                                  style: GoogleFonts.roboto(
-                                      fontSize: media.width * twelve,
-                                      color: textColor),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ))
                           : Container(),
 
                       //loader

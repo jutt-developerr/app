@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/nointernet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:image_picker/image_picker.dart';
@@ -81,6 +82,13 @@ class _EditProfileState extends State<EditProfile> {
   //navigate pop
   pop() {
     Navigator.pop(context, true);
+  }
+
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
   }
 
   @override
@@ -236,6 +244,8 @@ class _EditProfileState extends State<EditProfile> {
                               }
                               if (val == 'success') {
                                 pop();
+                              } else if (val == 'logout') {
+                                navigateLogout();
                               } else {
                                 setState(() {
                                   _error = val.toString();

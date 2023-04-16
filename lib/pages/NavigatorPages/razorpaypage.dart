@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/NavigatorPages/walletpage.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/noInternet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:tagyourtaxi_driver/translations/translation.dart';
@@ -34,12 +35,25 @@ class _RazorPayPageState extends State<RazorPayPage> {
     super.initState();
   }
 
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
+
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     dynamic val;
     if (widget.from == '1') {
       val = await payMoneyStripe(response.paymentId);
+      if (val == 'logout') {
+        navigateLogout();
+      }
     } else {
       val = await addMoneyRazorpay(addMoney, response.paymentId);
+      if (val == 'logout') {
+        navigateLogout();
+      }
     }
     if (val == 'success') {
       if (mounted) {

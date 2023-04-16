@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:tagyourtaxi_driver/translations/translation.dart';
 
@@ -19,8 +20,22 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     //get messages
-    getCurrentMessages();
+    getMessages();
     super.initState();
+  }
+
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
+
+  getMessages() async {
+    var val = await getCurrentMessages();
+    if (val == 'logout') {
+      navigateLogout();
+    }
   }
 
   @override
@@ -218,7 +233,11 @@ class _ChatPageState extends State<ChatPage> {
                                       setState(() {
                                         _sendingMessage = true;
                                       });
-                                      await sendMessage(chatText.text);
+                                      var val =
+                                          await sendMessage(chatText.text);
+                                      if (val == 'logout') {
+                                        navigateLogout();
+                                      }
                                       chatText.clear();
                                       setState(() {
                                         _sendingMessage = false;

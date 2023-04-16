@@ -159,7 +159,6 @@ class _LanguagesState extends State<Languages> {
                           setState(() {
                             _isLoading = true;
                           });
-                          await getlangid();
                           pref.setString(
                               'languageDirection', languageDirection);
                           pref.setString('choosenLanguage', choosenLanguage);

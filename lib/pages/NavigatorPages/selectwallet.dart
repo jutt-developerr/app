@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tagyourtaxi_driver/functions/functions.dart';
 import 'package:tagyourtaxi_driver/pages/NavigatorPages/walletpage.dart';
 import 'package:tagyourtaxi_driver/pages/loadingPage/loading.dart';
+import 'package:tagyourtaxi_driver/pages/login/login.dart';
 import 'package:tagyourtaxi_driver/pages/noInternet/nointernet.dart';
 import 'package:tagyourtaxi_driver/styles/styles.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -24,6 +25,13 @@ class _SelectWalletState extends State<SelectWallet> {
   bool _isLoading = false;
   bool _success = false;
   bool _failed = false;
+
+  navigateLogout() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false);
+  }
 
   @override
   void initState() {
@@ -140,6 +148,9 @@ class _SelectWalletState extends State<SelectWallet> {
                                           if (widget.from == '1') {
                                             val3 =
                                                 await payMoneyStripe(val2.id);
+                                            if (val3 == 'logout') {
+                                              navigateLogout();
+                                            }
                                           } else {
                                             val3 = await addMoneyStripe(
                                                 addMoney, val2.id);
@@ -148,6 +159,8 @@ class _SelectWalletState extends State<SelectWallet> {
                                             setState(() {
                                               _success = true;
                                             });
+                                          } else if (val3 == 'logout') {
+                                            navigateLogout();
                                           } else {
                                             setState(() {
                                               _failed = true;
@@ -158,6 +171,8 @@ class _SelectWalletState extends State<SelectWallet> {
                                             _failed = true;
                                           });
                                         }
+                                      } else if (val == 'logout') {
+                                        navigateLogout();
                                       } else {
                                         setState(() {
                                           _failed = true;
